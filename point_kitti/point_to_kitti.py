@@ -1,14 +1,18 @@
 #!/usr/bin/env python
-import rospy
+import rclpy
+from rclpy.node import Node
 import pypcd
 from sensor_msgs.msg import PointCloud2
 import numpy as np
 import os
 
-class PointToKitti(object):
+class PointToKitti(Node):
     def __init__(self):
-        self.sub = rospy.Subscriber("/sensing/lidar/top/rectified/pointcloud", PointCloud2, self.cb)
-        #self.sub = rospy.Subscriber("/sensing/lidar/pointcloud", PointCloud2, self.cb)
+        super().__init__('minimal_subscriber')
+        self.subscription = self.create_subscription(
+                PointCloud2,
+                "/sensing/lidar/top/rectified/pointcloud",
+                self.cb)
         self.counter = 0 
 
         self.save_dir = "./normal"
@@ -48,10 +52,16 @@ class PointToKitti(object):
         #b.astype('float32').tofile(bin_file)
         self.counter += 1
 
-if __name__ == "__main__":
-    rospy.init_node("point_to_kitti")
+def main(args=None):
+    rclpy.init(args=args)
     ptk = PointToKitti()
-    rospy.spin()
+    rclpy.spin(ptk)
+
+    ptk.destroy_node()
+    rclpy.shutdon()
+
+if __name__ == "__main__":
+    main()
     
     
         
