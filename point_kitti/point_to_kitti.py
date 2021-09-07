@@ -12,7 +12,8 @@ class PointToKitti(Node):
         self.subscription = self.create_subscription(
                 PointCloud2,
                 "/sensing/lidar/top/rectified/pointcloud",
-                self.cb)
+                self.cb,
+                10)
         self.counter = 0 
 
         self.save_dir = "./normal"
